@@ -1,0 +1,15 @@
+"Gamemode"
+{
+    "base" "base"
+    "title"  "hgrp"
+    "version"   "1"
+    "menusystem"	"1"
+
+    "author_name"   "Annoyed Tree"
+    "author_email"  ""
+    "author_url"    "http://darkrp.googlecode.com"
+	
+    "icon"  ""
+    "info"  ""
+    "hide"  "0"
+}
