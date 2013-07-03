@@ -5,33 +5,33 @@ function meta:JobId()
 	if ( SERVER ) then
 		return self.hgrp.jobid;
 	end
-	return hg_rp.jobid;
+	return roleplay.jobid;
 end
 
 function meta:Money()
 	if ( SERVER ) then
 		return self.hgrp.money;
 	end
-	return hg_rp.money;
+	return roleplay.money;
 end
 
 function meta:BankMoney()
 	if ( SERVER ) then
 		return self.hgrp.bankmoney;
 	end
-	return hg_rp.bankmoney;
+	return roleplay.bankmoney;
 end
 
 function meta:Salary()
-	return HGRP.Jobs[ self:JobId() ].salary;
+	return Roleplay.Jobs[ self:JobId() ].Salary;
 end
 
 function meta:Job()
-	return HGRP.Jobs[ self:JobId() ].job;
+	return Roleplay.Jobs[ self:JobId() ].Job;
 end
 
 function meta:Flags( flag )
-	if ( table.HasValue( HGRP.Jobs[ self:JobId() ].flags, flag ) ) then
+	if ( string.find( Roleplay.Jobs[ self:JobId() ].Flags, flag ) ) then
 		return true;
 	end
 	return false;
@@ -41,39 +41,39 @@ function meta:Hunger()
 	if ( SERVER ) then
 		return self.hgrp.hunger;
 	end
-	return hg_rp.hunger;
+	return roleplay.hunger;
 end
 
 function meta:Stamina()
 	if ( SERVER ) then
 		return self.hgrp.stamina;
 	end
-	return hg_rp.stamina;
+	return roleplay.stamina;
 end
 
 function meta:HasItem( class )
-	if ( !HGRP.Items[ class ] ) then return false; end
+	if ( !Roleplay.Items[ class ] ) then return false; end
 	if ( SERVER ) then
 		if ( table.HasValue( self.hgrp.inventory, class ) ) then
 			return true;
 		end
 		return false;
 	end
-	if ( table.HasValue( hg_rp.inventory, class ) ) then
+	if ( table.HasValue( roleplay.inventory, class ) ) then
 		return true;
 	end
 	return false;
 end
 
 function meta:HasItemInBank( class )
-	if ( !HGRP.Items[ class ] ) then return false; end
+	if ( !Roleplay.Items[ class ] ) then return false; end
 	if ( SERVER ) then
 		if ( table.HasValue( self.hgrp.bankinventory, class ) ) then
 			return true;
 		end
 		return false;
 	end
-	if ( table.HasValue( hg_rp.bankinventory, class ) ) then
+	if ( table.HasValue( roleplay.bankinventory, class ) ) then
 		return true;
 	end
 	return false;

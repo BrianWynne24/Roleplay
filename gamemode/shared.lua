@@ -1,6 +1,4 @@
-BS			 = {};
-
-GM.Name		 = "HGRP";
+GM.Name		 = "Roleplay";
 GM.Author 	 = "Annoyed Tree";
 GM.Website	 = "";
 GM.Folder	 = "roleplay"; //Do not edit this...

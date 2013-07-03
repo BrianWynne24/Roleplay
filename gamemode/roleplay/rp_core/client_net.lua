@@ -1,7 +1,7 @@
 net.Receive( "rp_Job", function( len )
 	local id = net.ReadInt(8);
 
-	hg_rp.jobid = id;
+	roleplay.jobid = id;
 end );
 
 net.Receive( "rp_Money", function( len )
@@ -10,9 +10,9 @@ net.Receive( "rp_Money", function( len )
 	
 	bool = tobool(bool);
 	if ( bool ) then
-		hg_rp.money = amt;
+		roleplay.money = amt;
 	else
-		hg_rp.bankmoney = amt;
+		roleplay.bankmoney = amt;
 	end
 end );
 
@@ -22,9 +22,9 @@ net.Receive( "rp_StHu", function( len )
 
 	bool = tobool(bool);
 	if ( bool ) then
-		hg_rp.stamina = amt;
+		roleplay.stamina = amt;
 	else
-		hg_rp.hunger = amt;
+		roleplay.hunger = amt;
 	end
 end );
 
@@ -34,11 +34,11 @@ net.Receive( "rp_Inv", function( len )
 	
 	bool = tobool(bool);
 	if ( bool ) then
-		table.insert( hg_rp.inventory, str );
+		table.insert( roleplay.inventory, str );
 	else
-		for k, v in pairs( hg_rp.inventory ) do
+		for k, v in pairs( roleplay.inventory ) do
 		if ( v == str ) then
-				table.remove( hg_rp.inventory, k );
+				table.remove( roleplay.inventory, k );
 				return;
 			end
 		end
@@ -51,11 +51,11 @@ net.Receive( "rp_bItem", function( len )
 	
 	bool = tobool(bool);
 	if ( bool ) then
-		table.insert( hg_rp.bankinventory, str );
+		table.insert( roleplay.bankinventory, str );
 	else
-		for k, v in pairs( hg_rp.bankinventory ) do
+		for k, v in pairs( roleplay.bankinventory ) do
 		if ( v == str ) then
-				table.remove( hg_rp.bankinventory, k );
+				table.remove( roleplay.bankinventory, k );
 				return;
 			end
 		end
@@ -63,23 +63,32 @@ net.Receive( "rp_bItem", function( len )
 end );
 
 net.Receive( "rp_UpPr", function( len )
-	local name = net.ReadString();
+	/*local name = net.ReadString();
 	local owner = net.ReadString();
 	//local price = net.ReadInt(16);
 
 	if ( owner == "" ) then
-		HGRP.Property[ name ].owner = "";
+		Roleplay.Property[ name ].owner = "";
 		return;
 	end
 	
-	HGRP.Property[ name ].owner = owner;
+	Roleplay.Property[ name ].owner = owner;*/
+	local property = net.ReadTable();
+	Roleplay.Property = property;
+end );
+
+net.Receive( "rp_UpJb", function( len )
+	local job = net.ReadTable();
+	
+	//Roleplay.Jobs[ jobid ] = { job = job, salary = salary };
+	Roleplay.Jobs = job;
 end );
 
 net.Receive( "rp_Employ", function( len )
 	local name = net.ReadString();
 	local id = net.ReadInt(16);
 
-	hg_rp.offered = {};
-		hg_rp.offered.name = name;
-		hg_rp.offered.id = id;
+	roleplay.offered = {};
+		roleplay.offered.name = name;
+		roleplay.offered.id = id;
 end );

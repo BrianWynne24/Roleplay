@@ -1,29 +1,27 @@
 
-HGRP.Config.EnableOOC		= true; //out of character on or off
-HGRP.Config.EnableHunger	= true; //hunger mod
-HGRP.Config.EnableSalary	= true; //salary mod
-HGRP.Config.EnableJailPay   = false; //Paid while in jail
-HGRP.Config.PayToBank		= true; //Direct-doposit on/off
-HGRP.Config.DevMode			= true; //Helps with development/editing
+Roleplay.Config.EnableOOC		= true; //out of character on or off
+Roleplay.Config.EnableHunger	= true; //hunger mod
+Roleplay.Config.EnableSalary	= true; //salary mod
+Roleplay.Config.EnableJailPay   = false; //Paid while in jail
+Roleplay.Config.PayToBank		= true; //Direct-doposit on/off
+Roleplay.Config.DevMode			= true; //Helps with development/editing
 
-HGRP.Config.PaydayTime		= 1; //Amount in minutes players will recieve their salaries
-HGRP.Config.HungerTime		= 1.4; //Amount in minutes players get %1 of hunger taken off
-HGRP.Config.Currencey		= "$"; //Currencey of the server
-HGRP.Config.SaveDirectory   = "hgrp/" //Where to save player data/server files
+Roleplay.Config.PaydayTime		= 1; //Amount in minutes players will recieve their salaries
+Roleplay.Config.HungerTime		= 1.4; //Amount in minutes players get %1 of hunger taken off
+Roleplay.Config.SaveDirectory   = "hgrp/" //Where to save player data/server files
 
-HGRP.Config.MaxItems 		= 16; //How many items can the player carry
-HGRP.Config.MaxBankItems	= 64; //How many items are allowed in the bank
-HGRP.Config.DonatorItemAdd  = 10; //Donators and admins get 10 additional slots in both their banks and inventories
+Roleplay.Config.MaxItems 		= 16; //How many items can the player carry
+Roleplay.Config.MaxBankItems	= 64; //How many items are allowed in the bank
+Roleplay.Config.DonatorItemAdd  = 10; //Donators and admins get 10 additional slots in both their banks and inventories
 
-//Jobs
-HGRP.Config.AddJob( "Unemployed", 5, {} ); //The first job is the starting job
-HGRP.Config.AddJob( "Admin", 50, { "admin", "police" } ); //Test job
-HGRP.Config.AddJob( "Police", 30, { "police" } );
+Roleplay.Config.MoneyPrinterMdl = "models/props_c17/consolebox01a.mdl"; //Model the money printer
 
-//Properties
-HGRP.Config.AddProperty( "Police Station", "police_master", -1, { "police_child01", "police_child02" } );
-HGRP.Config.AddProperty( "Closet", "closet_01", 100, {} );
+Roleplay.Config.MySQLHost		= "localhost";
+Roleplay.Config.MySQLUser		= "root";
+Roleplay.Config.MySQLPass		= "annoyed";
+Roleplay.Config.MySQLDatabase   = "hgrp";
+Roleplay.Config.MySQLPort		= 3306;
 
 //Shops
-HGRP.Config.AddShop( "blackmarket", Vector( 0, 0, 0 ), Angle( 0, 0, 0 ) );
-HGRP.Config.AddShop( "teller", Vector( 0, 0, 0 ), Angle( 0, 0, 0 ) );
+Roleplay.Config.AddShop( "blackmarket", Vector( 0, 0, 0 ), Angle( 0, 0, 0 ) );
+Roleplay.Config.AddShop( "teller", Vector( 0, 0, 0 ), Angle( 0, 0, 0 ) );

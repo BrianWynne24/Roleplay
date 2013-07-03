@@ -13,29 +13,29 @@ function meta:IsValidDoor()
 end
 
 function meta:ValidProperty()
-	if ( HGRP.Property[ self:GetName() ] || HGRP.Property_Child[ self:GetName() ] ) then
+	if ( Roleplay.Property[ self:GetName() ] ) then
 		return true;
 	end
 	return false;
 end
 
 function meta:GetMasterDoor()
-	if ( self:IsValidDoor() && HGRP.Property[ self:GetName() ].master ) then //This has a master, is a linked door
-		return HGRP.Property[ self:GetName() ].master;
+	if ( self:IsValidDoor() && Roleplay.Property[ self:GetName() ] && Roleplay.Property[ self:GetName() ].Master ) then //This has a master, is a linked door
+		return Roleplay.Property[ self:GetName() ].Master or self:GetName();
 	end
 	return self:GetName();
 end
 
 function meta:GetPropertyOwner()
-	return HGRP.Property[ self:GetMasterDoor() ].owner or "";
+	return Roleplay.Property[ self:GetMasterDoor() ].Owner or nil;
 end
 
 function meta:GetPropertyName()
-	return HGRP.Property[ self:GetMasterDoor() ].title;
+	return Roleplay.Property[ self:GetMasterDoor() ].Name;
 end
 
 function meta:GetPropertyPrice()
-	return HGRP.Property[ self:GetMasterDoor() ].price;
+	return Roleplay.Property[ self:GetMasterDoor() ].Price;
 end
 
 if ( CLIENT ) then

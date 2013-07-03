@@ -1,7 +1,7 @@
 
 function GM:PlayerInitialSpawn( pl )
 	pl:OnInitialSpawn();
-	pl:LoadData();
+	pl:LoadMySQL();
 end
 
 function GM:PlayerSpawn( pl )
@@ -9,14 +9,15 @@ function GM:PlayerSpawn( pl )
 end
 
 function GM:Think()
-	HGRP.Payday();
-	HGRP.PlayerThink();
+	Roleplay.Payday();
+	Roleplay.PlayerThink();
+	Roleplay.db.Think();
 end
 
 function GM:InitPostEntity()
-	HGRP.LoadProperty();
+	Roleplay.LoadProperty();
 end
 
 function GM:PlayerDisconnected( pl )
-	pl:SaveData();
+	//pl:SaveMySQL();
 end

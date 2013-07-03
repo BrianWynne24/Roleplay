@@ -1,18 +1,18 @@
-HGRP.Bind = {};
+Roleplay.Bind = {};
 
-function HGRP.Bind.EmploymentOffer( pl, bind )
+function Roleplay.Bind.EmploymentOffer( pl, bind )
 	if ( bind == "slot1" ) then
 		RunConsoleCommand( "rp_offer", "1" );
-		hg_rp.offered = nil;
+		roleplay.offered = nil;
 	elseif ( bind == "slot2" ) then
 		RunConsoleCommand( "rp_offer", "0" );
-		hg_rp.offered = nil;
+		roleplay.offered = nil;
 	end
 end
 
 function GM:PlayerBindPress( pl, bind, pressed )
-	if ( hg_rp.offered ) then
-		HGRP.Bind.EmploymentOffer( pl, bind );
+	if ( roleplay.offered ) then
+		Roleplay.Bind.EmploymentOffer( pl, bind );
 	end
 	if ( bind == "+menu" ) then
 		RunConsoleCommand( "rp_keys" );

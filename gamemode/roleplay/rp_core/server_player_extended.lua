@@ -31,15 +31,21 @@ function meta:OnInitialSpawn()
 		
 	//self:SetJob( self.hgrp.jobid ); //This will return nil, no point trying to call it
 	//self:SetMoney( self.hgrp.money );
-	for k, v in pairs( HGRP.Property ) do
-		if ( v.owner && v.owner != "" ) then
-			local steamid = tostring(v.owner);
+	//for k, v in pairs( Roleplay.Property ) do
+	//	if ( v.owner && v.owner != "" ) then
+			/*local steamid = tostring(v.owner);
 			net.Start( "rp_UpPr" );
 				net.WriteString( k );
 				net.WriteString( steamid );
+			net.Send( self );*/
+			net.Start( "rp_UpPr" );
+				net.WriteTable( Roleplay.Property );
 			net.Send( self );
-		end
-	end
+			net.Start( "rp_UpJb" );
+				net.WriteTable( Roleplay.Jobs );
+			net.Broadcast();
+		//end
+	//end
 
 end
 
@@ -125,7 +131,7 @@ function meta:AddHunger( amt )
 end
 
 function meta:SetJob( id )
-	if ( !HGRP.Jobs[ id ] || self.hgrp.jobid == id ) then return; end
+	if ( !Roleplay.Jobs[ id ] || self.hgrp.jobid == id ) then return; end
 	
 	self.hgrp.jobid = id;
 	net.Start( "rp_Job" );
@@ -149,12 +155,14 @@ function meta:EmploymentOffer( offerer, jobid )
 end
 
 function meta:Payday()
-	if ( HGRP.Config.PayToBank ) then
+	if ( !self:Alive() ) then return; end
+	
+	if ( Roleplay.Config.PayToBank ) then
 		self:AddBankMoney( self:Salary() );
 	else
 		self:AddMoney( self:Salary() );
 	end
-	self:SaveData();
+	self:SaveMySQL();
 end
 
 function meta:SprintThink()
@@ -191,18 +199,18 @@ function meta:SprintThink()
 end
 
 function meta:HungerThink()
-	if ( CurTime() < self.hgrp.hungerwait || !self:Alive() || !HGRP.Config.EnableHunger ) then return; end
+	if ( CurTime() < self.hgrp.hungerwait || !self:Alive() || !Roleplay.Config.EnableHunger ) then return; end
 	
 	self:AddHunger( -1 );
 	if ( self:Hunger() < 1 ) then
 		self:AddHealth( -5 );
 	end
-	self.hgrp.hungerwait = CurTime() + (HGRP.Config.HungerTime*60);
+	self.hgrp.hungerwait = CurTime() + (Roleplay.Config.HungerTime*60);
 end
 
 //Inventory shittttttttt
 function meta:AddItemToInventory( class )
-	if ( !HGRP.Items[ class ] || self:InventoryFull() ) then return; end
+	if ( !Roleplay.Items[ class ] || self:InventoryFull() ) then return; end
 	table.insert( self.hgrp.inventory, class );
 	
 	net.Start( "rp_Inv" );
@@ -212,7 +220,7 @@ function meta:AddItemToInventory( class )
 end
 
 function meta:RemoveItemFromInventory( class )
-	if ( !HGRP.Items[ class ] ) then return; end
+	if ( !Roleplay.Items[ class ] ) then return; end
 	for k, v in pairs( self.hgrp.inventory ) do
 		if ( v == class ) then
 			net.Start( "rp_Inv" );
@@ -227,9 +235,9 @@ function meta:RemoveItemFromInventory( class )
 end
 
 function meta:InventoryUse( class )
-	if ( !self:HasItem( class ) || !HGRP.Items[ class ] ) then return; end
+	if ( !self:HasItem( class ) || !Roleplay.Items[ class ] ) then return; end
 	
-	local item = HGRP.Items[ class ];
+	local item = Roleplay.Items[ class ];
 	if ( !item.CanUse( self ) ) then return; end
 	
 	item.OnUse( self );
@@ -240,9 +248,9 @@ function meta:InventoryUse( class )
 end
 
 function meta:InventoryDrop( class )
-	if ( !self:HasItem( class ) || !HGRP.Items[ class ] ) then return; end
+	if ( !self:HasItem( class ) || !Roleplay.Items[ class ] ) then return; end
 	
-	local item = HGRP.Items[ class ];
+	local item = Roleplay.Items[ class ];
 	local prop = ents.Create( "ent_item" );
 	
 	prop:SetPos( self:GetShootPos() + (pl:GetAimVector()*16) );
@@ -258,7 +266,7 @@ function meta:InventoryDrop( class )
 end
 
 function meta:InventoryPickup( class, ent )
-	if ( self:InventoryFull() || !HGRP.Items[ class ] ) then return; end
+	if ( self:InventoryFull() || !Roleplay.Items[ class ] ) then return; end
 	
 	self:AddItemToInventory( class );
 	
@@ -268,14 +276,14 @@ function meta:InventoryPickup( class, ent )
 end
 
 function meta:InventoryFull()
-	if ( #self.hgrp.inventory >= HGRP.Config.MaxItems ) then
+	if ( #self.hgrp.inventory >= Roleplay.Config.MaxItems ) then
 		return true;
 	end
 	return false;
 end
 
 function meta:AddItemToBank( class )
-	if ( !HGRP.Items[ class ] || self:BankFull() ) then return; end
+	if ( !Roleplay.Items[ class ] || self:BankFull() ) then return; end
 	
 	table.insert( self.hgrp.bankinventory, class );
 	net.Start( "rp_bItem" );
@@ -287,7 +295,7 @@ function meta:AddItemToBank( class )
 end
 
 function meta:RemoveItemFromBank( class )
-	if ( !HGRP.Items[ class ] || !self:HasItemInBank( class ) ) then return; end
+	if ( !Roleplay.Items[ class ] || !self:HasItemInBank( class ) ) then return; end
 	
 	for k, v in pairs( self.hgrp.bankinventory ) do
 		if ( v == class ) then
@@ -303,21 +311,21 @@ function meta:RemoveItemFromBank( class )
 end
 
 function meta:BankFull()
-	if ( #self.hgrp.bankinventory >= HGRP.Config.MaxBankItems ) then
+	if ( #self.hgrp.bankinventory >= Roleplay.Config.MaxBankItems ) then
 		return true;
 	end
 	return false;
 end
 
 function meta:BankToInventory( class )
-	if ( !HGRP.Items[ class ] || !self:HasItemInBank( class ) || self:InventoryFull() ) then return; end
+	if ( !Roleplay.Items[ class ] || !self:HasItemInBank( class ) || self:InventoryFull() ) then return; end
 	
 	self:AddItemToInventory( class );
 	self:RemoveItemFromBank( class );
 end
 
 function meta:InventoryToBank( class )
-	if ( !HGRP.Items[ class ] || !self:HasItem( class ) || self:BankFull() ) then return; end
+	if ( !Roleplay.Items[ class ] || !self:HasItem( class ) || self:BankFull() ) then return; end
 	
 	self:AddItemToBank( class );
 	self:RemoveItemFromInventory( class );
@@ -326,92 +334,99 @@ end
 function meta:PropertiesOwned()
 	local doors = {};
 	for k, v in pairs( ents.GetAll() ) do
-		if ( HGRP.Property[ v:GetName() ].owner == self:SteamID() ) then
+		if ( Roleplay.Property[ v:GetName() ].owner == self:SteamID() ) then
 			table.insert( doors, v:GetName() );
 		end
 	end
 	return doors;
 end
 
-//Saving & Loading
-function meta:SaveData()
-	local dir = HGRP.Config.SaveDirectory;
-	dir = dir .. "character_data/";
+function meta:SaveMySQL()
+	Roleplay.db.Query( "INSERT INTO playerdata (User,JobID,Money,Bank,Inventory) VALUES(" .. self:SaveID() .. "," .. self:JobId() .. "," .. self:Money() .. "," .. self:BankMoney() .. ",NULL)" );
+	Roleplay.db.Query( "UPDATE playerdata SET Money = " .. self:Money() .. " WHERE User = " .. self:SaveID() );
+	Roleplay.db.Query( "UPDATE playerdata SET Bank = " .. self:BankMoney() .. " WHERE User = " .. self:SaveID() );	
+	Roleplay.db.Query( "UPDATE playerdata SET JobID = " .. self:JobId() .. " WHERE User = " .. self:SaveID() );
+	Roleplay.db.Query( "UPDATE playerdata SET Hunger = " .. self:Hunger() .. " WHERE User = " .. self:SaveID() );
 	
-	local id = self:SteamID();
-	id = string.gsub( id, ":", "_" );
-	
-	dir = dir .. id;
-	dir = string.lower(dir) .. "/";
-	
-	if ( !file.IsDir( dir, "DATA" ) ) then
-		file.CreateDir( dir );
-	end
-	
-	file.Write( dir .. "inventory.txt", util.TableToJSON( self.hgrp.inventory ) );
-	file.Write( dir .. "bankinventory.txt", util.TableToJSON( self.hgrp.bankinventory ) );
-	
-	local data = {};
-		data.money = self:Money();
-		data.bankmoney = self:BankMoney();
-		data.jobid = self:JobId();
-		data.hunger = self:Hunger();
-		
-	file.Write( dir .. "data.txt", util.TableToJSON( data ) );
-
+	self:SaveInventory(); 
+	self:SaveBankInventory();
 	self:PrintMessage( 1, "roleplay data has been saved" );
 end
 
-function meta:LoadData()
-	local dir = HGRP.Config.SaveDirectory;
-	dir = dir .. "character_data/";
-	
-	local id = self:SteamID();
-	id = string.gsub( id, ":", "_" );
-	
-	dir = dir .. id;
-	dir = string.lower(dir);
-	
-	if ( !file.IsDir( dir, "DATA" ) ) then
-		file.CreateDir( dir );
+function meta:SaveInventory()
+	if ( #self.hgrp.inventory <= 0 ) then
+		Roleplay.db.Query( "UPDATE playerdata SET Inventory = NULL WHERE User = " .. self:SaveID() );
 		return;
 	end
 	
-	if ( file.Exists( dir .. "/inventory.txt", "DATA" ) ) then
-		//self.hgrp.inventory = util.JSONToTable( file.Read(dir.."/inventory.txt","DATA") );
-		local inventory = util.JSONToTable( file.Read(dir.."/inventory.txt","DATA") )
-		for k, v in pairs( inventory ) do
-			self:AddItemToInventory( v );
+	local values = "UPDATE playerdata SET Inventory = '";
+	for k, v in pairs( self.hgrp.inventory ) do
+		values = values .. v .. ",";
+	end
+	values = string.sub( values, 1, -2 ) .. "' WHERE User = " .. self:SaveID();
+	Roleplay.db.Query( values );
+end
+
+function meta:SaveBankInventory()
+	if ( #self.hgrp.bankinventory <= 0 ) then
+		Roleplay.db.Query( "UPDATE playerdata SET BankInventory = NULL WHERE User = " .. self:SaveID() );
+		return;
+	end
+	
+	local values = "UPDATE playerdata SET BankInventory = '";
+	for k, v in pairs( self.hgrp.bankinventory ) do 
+		values = values .. v .. ",";
+	end
+	values = string.sub( values, 1, -2 ) .. "' WHERE User = " .. self:SaveID();
+	Roleplay.db.Query( values );
+end
+
+function meta:LoadMySQL()
+	local pl = self;
+
+	local function query( data )
+		if ( !data[1] ) then return; end
+		local bank = data[1].BankInventory or nil;
+		local inv  = data[1].Inventory or nil;
+		local job = data[1].JobID or "";
+		local money = data[1].Money or 0;
+		local hunger = data[1].Hunger or 100;
+		local bank = data[1].Bank or 0;
+		
+		if ( bank ) then
+			bank = string.Explode( ",", bank );
+			for k, v in pairs( bank ) do
+				pl:AddItemToBank( v );
+			end
 		end
-	end
-	if ( file.Exists( dir .. "/bankinventory.txt", "DATA" ) ) then
-		//self.hgrp.bankinventory = util.JSONToTable( file.Read(dir.."/bankinventory.txt","DATA") );
-		local inventory = util.JSONToTable( file.Read(dir.."/bankinventory.txt","DATA") )
-		for k, v in pairs( inventory ) do
-			self:AddItemToBank( v );
+		
+		if ( inv ) then
+			inv = string.Explode( ",", inv );
+			for k, v in pairs( inv ) do
+				pl:AddItemToBank( v );
+			end
 		end
+		
+		pl:SetJob( data[1].JobID );
+		pl:SetMoney( data[1].Money );
+		pl:SetBankMoney( data[1].Bank ); 
+		pl:SetHunger( data[1].Hunger );
 	end
-	if ( file.Exists( dir .. "/data.txt", "DATA" ) ) then
-		local data = util.JSONToTable( file.Read(dir.."/data.txt","DATA") );
-		self:SetJob( data.jobid );
-		self:SetHunger( data.hunger );
-		self:SetMoney( data.money );
-		self:SetBankMoney( data.bankmoney );
-	end
-	self:PrintMessage( 1, "roleplay data has been loaded" );
+
+	Roleplay.db.Query( "SELECT * FROM playerdata WHERE User = " .. self:SaveID(), query );
 end
 
 //Propertyyyyyyy
 function meta:BuyProperty( name )
 	name = name:GetMasterDoor();
-	if ( !HGRP.Property[ name ] || self:BankMoney() < HGRP.Property[ name ].price || HGRP.Property[ name ].price <= 0 || HGRP.Property[ name ].owner ) then return; end
+	if ( !Roleplay.Property[ name ] || self:BankMoney() < Roleplay.Property[ name ].price || Roleplay.Property[ name ].price <= 0 || Roleplay.Property[ name ].owner ) then return; end
 	
 	if ( self:Flags() != "admin" ) then
-		local price = HGRP.Property[ name ].price;
+		local price = Roleplay.Property[ name ].price;
 		self:AddBankMoney( -price );
 	end
 	
-	HGRP.Property[ name ].owner = self:SteamID();
+	Roleplay.Property[ name ].owner = self:SteamID();
 	
 	net.Start( "rp_UpPr" );
 		net.WriteString( name );
@@ -419,7 +434,7 @@ function meta:BuyProperty( name )
 		//net.WriteInt( 0, 16 );
 	net.Broadcast();
 	
-	HGRP.SavePropertyOwners();
+	Roleplay.SavePropertyOwners();
 end
 
 function meta:Keys()
@@ -429,7 +444,7 @@ function meta:Keys()
 	local door = tr.Entity;
 	door = door:GetMasterDoor();
 	
-	if ( HGRP.Property[ door ].owner == self:SteamID() ) then
+	if ( Roleplay.Property[ door ].owner == self:SteamID() ) then
 		if ( !tr.Entity.locked ) then
 			tr.Entity.locked = true;
 			tr.Entity:Fire( "lock", "", 0 );
@@ -438,4 +453,12 @@ function meta:Keys()
 			tr.Entity:Fire( "unlock", "", 0 );
 		end
 	end
+end
+
+function meta:SaveID()
+	local id = self:SteamID();
+	id = string.gsub( id, "STEAM_", "" );
+	id = string.gsub( id, ":", "" );
+	
+	return id;
 end
