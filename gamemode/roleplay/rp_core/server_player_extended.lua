@@ -2,35 +2,35 @@ local meta = FindMetaTable( "Player" );
 if ( !meta ) then return; end
 
 function meta:RunSpeed( speed )
-	if ( speed == self.hgrp.runspeed ) then return; end
+	if ( speed == self.roleplay.runspeed ) then return; end
 	self:SetRunSpeed( speed );
-	self.hgrp.runspeed = speed;
+	self.roleplay.runspeed = speed;
 end
 
 function meta:WalkSpeed( speed )
-	if ( speed == self.hgrp.walkspeed ) then return; end
+	if ( speed == self.roleplay.walkspeed ) then return; end
 	self:SetWalkSpeed( speed );
-	self.hgrp.walkspeed = speed;
+	self.roleplay.walkspeed = speed;
 end
 
 function meta:OnInitialSpawn()
 	//First we make all the variables the player will have
-	self.hgrp = {};
-		self.hgrp.money = 0;
-		self.hgrp.jobid = 1;
-		self.hgrp.stamina = 100;
-		self.hgrp.stamwait = CurTime();
-		self.hgrp.runspeed = 320;
-		self.hgrp.walkspeed = 180;
-		self.hgrp.hunger = 100;
-		self.hgrp.hungerwait = CurTime();
-		self.hgrp.inventory = {};
-		self.hgrp.bankinventory = {};
-		self.hgrp.bankmoney = 0;
-		self.hgrp.offered = 0;
+	self.roleplay = {};
+		self.roleplay.money = 0;
+		self.roleplay.jobid = 1;
+		self.roleplay.stamina = 100;
+		self.roleplay.stamwait = CurTime();
+		self.roleplay.runspeed = 320;
+		self.roleplay.walkspeed = 180;
+		self.roleplay.hunger = 100;
+		self.roleplay.hungerwait = CurTime();
+		self.roleplay.inventory = {};
+		self.roleplay.bankinventory = {};
+		self.roleplay.bankmoney = 0;
+		self.roleplay.offered = 0;
 		
-	//self:SetJob( self.hgrp.jobid ); //This will return nil, no point trying to call it
-	//self:SetMoney( self.hgrp.money );
+	//self:SetJob( self.roleplay.jobid ); //This will return nil, no point trying to call it
+	//self:SetMoney( self.roleplay.money );
 	//for k, v in pairs( Roleplay.Property ) do
 	//	if ( v.owner && v.owner != "" ) then
 			/*local steamid = tostring(v.owner);
@@ -65,9 +65,9 @@ function meta:AddHealth( hp )
 end
 
 function meta:SetMoney( amt )
-	if ( self.hgrp.money == amt ) then return; end
+	if ( self.roleplay.money == amt ) then return; end
 	
-	self.hgrp.money = amt;
+	self.roleplay.money = amt;
 	net.Start( "rp_Money" );
 		net.WriteBit( true );
 		net.WriteInt( amt, 16 );
@@ -89,9 +89,9 @@ function meta:GiveMoney( pl, amt )
 end
 
 function meta:SetBankMoney( amt )
-	if ( self.hgrp.bankmoney == amt ) then return; end
+	if ( self.roleplay.bankmoney == amt ) then return; end
 	
-	self.hgrp.bankmoney = amt;
+	self.roleplay.bankmoney = amt;
 	net.Start( "rp_Money" );
 		net.WriteBit( false );
 		net.WriteInt( amt, 16 );
@@ -103,9 +103,9 @@ function meta:AddBankMoney( amt )
 end
 
 function meta:SetStamina( amt )
-	if ( self.hgrp.stamina == amt ) then return; end //Don't send net messages to to client for no reason
+	if ( self.roleplay.stamina == amt ) then return; end //Don't send net messages to to client for no reason
 	
-	self.hgrp.stamina = amt;
+	self.roleplay.stamina = amt;
 	net.Start( "rp_StHu" );
 		net.WriteBit( true );
 		net.WriteInt( amt, 8 );
@@ -117,9 +117,9 @@ function meta:AddStamina( amt )
 end
 
 function meta:SetHunger( amt )
-	if ( self.hgrp.hunger == amt ) then return; end
+	if ( self.roleplay.hunger == amt ) then return; end
 	
-	self.hgrp.hunger = amt;
+	self.roleplay.hunger = amt;
 	net.Start( "rp_StHu" );
 		net.WriteBit( false );
 		net.WriteInt( amt, 8 );
@@ -131,23 +131,23 @@ function meta:AddHunger( amt )
 end
 
 function meta:SetJob( id )
-	if ( !Roleplay.Jobs[ id ] || self.hgrp.jobid == id ) then return; end
+	if ( !Roleplay.Jobs[ id ] || self.roleplay.jobid == id ) then return; end
 	
-	self.hgrp.jobid = id;
+	self.roleplay.jobid = id;
 	net.Start( "rp_Job" );
 		net.WriteInt( id, 8 );
 	net.Send( self );
 end
 
 function meta:EmploymentOffer( offerer, jobid )
-	if ( self:JobId() == jobid || self.hgrp.offered >= 1 ) then return; end
+	if ( self:JobId() == jobid || self.roleplay.offered >= 1 ) then return; end
 	
 	local name = "CONSOLE";
 	if ( IsValid( offerer ) && offerer:IsPlayer() ) then
 		name = offerer:Name();
 	end
 	
-	self.hgrp.offered = jobid;
+	self.roleplay.offered = jobid;
 	net.Start( "rp_Employ" );
 		net.WriteString( name );
 		net.WriteInt( jobid, 16 );
@@ -166,7 +166,7 @@ function meta:Payday()
 end
 
 function meta:SprintThink()
-	if ( CurTime() < self.hgrp.stamwait || !self:Alive() || (self:GetVelocity():Length() < 40 && self:KeyDown(IN_SPEED)) ) then return; end
+	if ( CurTime() < self.roleplay.stamwait || !self:Alive() || (self:GetVelocity():Length() < 40 && self:KeyDown(IN_SPEED)) ) then return; end
 	
 	local stam = self:Stamina();
 	if ( self:KeyDown( IN_SPEED ) ) then
@@ -178,7 +178,7 @@ function meta:SprintThink()
 			self:WalkSpeed( 120 );
 		end
 		
-		self.hgrp.stamwait = CurTime() + 0.18;
+		self.roleplay.stamwait = CurTime() + 0.18;
 		return;
 	elseif ( !self:KeyDown( IN_SPEED ) ) then
 		self:AddStamina( 1 );
@@ -194,24 +194,24 @@ function meta:SprintThink()
 		
 		//self:RunSpeed( 320 );
 		//self:WalkSpeed( 180 );
-		self.hgrp.stamwait = CurTime() + 0.5;
+		self.roleplay.stamwait = CurTime() + 0.5;
 	end
 end
 
 function meta:HungerThink()
-	if ( CurTime() < self.hgrp.hungerwait || !self:Alive() || !Roleplay.Config.EnableHunger ) then return; end
+	if ( CurTime() < self.roleplay.hungerwait || !self:Alive() || !Roleplay.Config.EnableHunger ) then return; end
 	
 	self:AddHunger( -1 );
 	if ( self:Hunger() < 1 ) then
 		self:AddHealth( -5 );
 	end
-	self.hgrp.hungerwait = CurTime() + (Roleplay.Config.HungerTime*60);
+	self.roleplay.hungerwait = CurTime() + (Roleplay.Config.HungerTime*60);
 end
 
 //Inventory shittttttttt
 function meta:AddItemToInventory( class )
 	if ( !Roleplay.Items[ class ] || self:InventoryFull() ) then return; end
-	table.insert( self.hgrp.inventory, class );
+	table.insert( self.roleplay.inventory, class );
 	
 	net.Start( "rp_Inv" );
 		net.WriteBit( true );
@@ -221,14 +221,14 @@ end
 
 function meta:RemoveItemFromInventory( class )
 	if ( !Roleplay.Items[ class ] ) then return; end
-	for k, v in pairs( self.hgrp.inventory ) do
+	for k, v in pairs( self.roleplay.inventory ) do
 		if ( v == class ) then
 			net.Start( "rp_Inv" );
 				net.WriteBit( false );
 				net.WriteString( class );
 			net.Send( self );
 			
-			table.remove( self.hgrp.inventory, k );
+			table.remove( self.roleplay.inventory, k );
 			return;
 		end
 	end
@@ -259,8 +259,8 @@ function meta:InventoryDrop( class )
 	prop:Activate();
 	prop:SetModel( item.Model );
 	
-	//prop.hgrp = {};
-	prop.hgrp.class = class;
+	//prop.roleplay = {};
+	prop.roleplay.class = class;
 	
 	self:RemoveItemFromInventory( class );
 end
@@ -276,7 +276,7 @@ function meta:InventoryPickup( class, ent )
 end
 
 function meta:InventoryFull()
-	if ( #self.hgrp.inventory >= Roleplay.Config.MaxItems ) then
+	if ( #self.roleplay.inventory >= Roleplay.Config.MaxItems ) then
 		return true;
 	end
 	return false;
@@ -285,7 +285,7 @@ end
 function meta:AddItemToBank( class )
 	if ( !Roleplay.Items[ class ] || self:BankFull() ) then return; end
 	
-	table.insert( self.hgrp.bankinventory, class );
+	table.insert( self.roleplay.bankinventory, class );
 	net.Start( "rp_bItem" );
 		net.WriteBit( true );
 		net.WriteString( class );
@@ -297,21 +297,21 @@ end
 function meta:RemoveItemFromBank( class )
 	if ( !Roleplay.Items[ class ] || !self:HasItemInBank( class ) ) then return; end
 	
-	for k, v in pairs( self.hgrp.bankinventory ) do
+	for k, v in pairs( self.roleplay.bankinventory ) do
 		if ( v == class ) then
 			net.Start( "rp_bItem" );
 				net.WriteBit( false );
 				net.WriteString( class );
 			net.Send( self );
 			
-			table.remove( self.hgrp.bankinventory, k );
+			table.remove( self.roleplay.bankinventory, k );
 			return;
 		end
 	end
 end
 
 function meta:BankFull()
-	if ( #self.hgrp.bankinventory >= Roleplay.Config.MaxBankItems ) then
+	if ( #self.roleplay.bankinventory >= Roleplay.Config.MaxBankItems ) then
 		return true;
 	end
 	return false;
@@ -354,13 +354,13 @@ function meta:SaveMySQL()
 end
 
 function meta:SaveInventory()
-	if ( #self.hgrp.inventory <= 0 ) then
+	if ( #self.roleplay.inventory <= 0 ) then
 		Roleplay.db.Query( "UPDATE playerdata SET Inventory = NULL WHERE User = " .. self:SaveID() );
 		return;
 	end
 	
 	local values = "UPDATE playerdata SET Inventory = '";
-	for k, v in pairs( self.hgrp.inventory ) do
+	for k, v in pairs( self.roleplay.inventory ) do
 		values = values .. v .. ",";
 	end
 	values = string.sub( values, 1, -2 ) .. "' WHERE User = " .. self:SaveID();
@@ -368,13 +368,13 @@ function meta:SaveInventory()
 end
 
 function meta:SaveBankInventory()
-	if ( #self.hgrp.bankinventory <= 0 ) then
+	if ( #self.roleplay.bankinventory <= 0 ) then
 		Roleplay.db.Query( "UPDATE playerdata SET BankInventory = NULL WHERE User = " .. self:SaveID() );
 		return;
 	end
 	
 	local values = "UPDATE playerdata SET BankInventory = '";
-	for k, v in pairs( self.hgrp.bankinventory ) do 
+	for k, v in pairs( self.roleplay.bankinventory ) do 
 		values = values .. v .. ",";
 	end
 	values = string.sub( values, 1, -2 ) .. "' WHERE User = " .. self:SaveID();

@@ -87,9 +87,9 @@ function Roleplay.Load.Items( dir )
 	for k, v in pairs( file.Find( dir .. "/*.lua", "LUA" ) ) do
 		ITEM = {};
 		if ( SERVER ) then
-			AddCSLuaFile( "roleplay_items/" .. v );
+			AddCSLuaFile( "rp_items/" .. v );
 		end
-		include( "roleplay_items/" .. v );
+		include( "rp_items/" .. v );
 		
 		local class = v;
 		class = string.gsub( class, ".lua", "" );
@@ -109,27 +109,27 @@ function Roleplay.Load.Core( dir )
 	for k, v in pairs( file.Find( dir .. "/client_*.lua", "LUA" ) ) do
 		
 		if( SERVER ) then
-			AddCSLuaFile( "roleplay_core/" .. v );
-			print( "> roleplay_core/" .. v );
+			AddCSLuaFile( "rp_core/" .. v );
+			print( "> rp_core/" .. v );
 		else
-			include( "roleplay_core/" .. v );
+			include( "rp_core/" .. v );
 		end
 		
 	end
 	for k, v in pairs( file.Find( dir .. "/shared_*.lua" , "LUA" ) ) do
 	
 		if( SERVER ) then
-			AddCSLuaFile( "roleplay_core/" .. v );
-			print( "> roleplay_core/" .. v );
+			AddCSLuaFile( "rp_core/" .. v );
+			print( "> rp_core/" .. v );
 		end
-		include( "roleplay_core/" .. v );
+		include( "rp_core/" .. v );
 	
 	end
 	for k, v in pairs( file.Find( dir .. "/server_*.lua", "LUA" ) ) do
 		
 		if( SERVER ) then
-			include( "roleplay_core/" .. v );
-			print( "> roleplay_core/" .. v );
+			include( "rp_core/" .. v );
+			print( "> rp_core/" .. v );
 		end
 		
 	end

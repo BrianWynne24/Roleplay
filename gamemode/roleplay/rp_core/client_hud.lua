@@ -73,7 +73,7 @@ function Roleplay.HUD.Dev( pl, x, y )
 	local name = roleplay.offered.name;
 	local jobid = roleplay.offered.id;
 	
-	draw.DrawText( "Employment Offer from " .. name .. "\n" .. Roleplay.Jobs[ jobid ].Job .. "\n$" .. Roleplay.Jobs[ jobid ].Salary .. " / hr\n\n1. Accept\n2. Decline", "TargetID", x * 0.01, y * 0.01, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT );
+	draw.DrawText( "Employment Offer from " .. name .. "\n" .. Roleplay.Jobs[ jobid ].Job .. "\n$" .. Roleplay.Jobs[ jobid ].Salary .. "/hr\n\n1. Accept\n2. Decline", "TargetID", x * 0.01, y * 0.01, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT );
 end
 
 function GM:HUDPaint()

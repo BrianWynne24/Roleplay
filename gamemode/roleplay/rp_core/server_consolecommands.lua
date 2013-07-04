@@ -113,12 +113,12 @@ Roleplay.cc.concommand( "rp_employ", Roleplay.cc.Employ, "Offer a job to somebod
 function Roleplay.cc.Offer( pl, cmd, args )
 	local choice = tonumber( args[1] );
 	
-	if ( !pl.hgrp.offered ) then return; end
+	if ( !pl.roleplay.offered ) then return; end
 	
 	if ( choice == 1 ) then
-		pl:SetJob( pl.hgrp.offered );
+		pl:SetJob( pl.roleplay.offered );
 	end
-	pl.hgrp.offered = 0;
+	pl.roleplay.offered = 0;
 end
 Roleplay.cc.concommand( "rp_offer", Roleplay.cc.Offer, "0 = Declines employment offer, 1 = Accept", "" );
 

@@ -3,21 +3,21 @@ if ( !meta ) then return; end
 
 function meta:JobId()
 	if ( SERVER ) then
-		return self.hgrp.jobid;
+		return self.roleplay.jobid;
 	end
 	return roleplay.jobid;
 end
 
 function meta:Money()
 	if ( SERVER ) then
-		return self.hgrp.money;
+		return self.roleplay.money;
 	end
 	return roleplay.money;
 end
 
 function meta:BankMoney()
 	if ( SERVER ) then
-		return self.hgrp.bankmoney;
+		return self.roleplay.bankmoney;
 	end
 	return roleplay.bankmoney;
 end
@@ -39,14 +39,14 @@ end
 
 function meta:Hunger()
 	if ( SERVER ) then
-		return self.hgrp.hunger;
+		return self.roleplay.hunger;
 	end
 	return roleplay.hunger;
 end
 
 function meta:Stamina()
 	if ( SERVER ) then
-		return self.hgrp.stamina;
+		return self.roleplay.stamina;
 	end
 	return roleplay.stamina;
 end
@@ -54,7 +54,7 @@ end
 function meta:HasItem( class )
 	if ( !Roleplay.Items[ class ] ) then return false; end
 	if ( SERVER ) then
-		if ( table.HasValue( self.hgrp.inventory, class ) ) then
+		if ( table.HasValue( self.roleplay.inventory, class ) ) then
 			return true;
 		end
 		return false;
@@ -68,7 +68,7 @@ end
 function meta:HasItemInBank( class )
 	if ( !Roleplay.Items[ class ] ) then return false; end
 	if ( SERVER ) then
-		if ( table.HasValue( self.hgrp.bankinventory, class ) ) then
+		if ( table.HasValue( self.roleplay.bankinventory, class ) ) then
 			return true;
 		end
 		return false;
